@@ -1,38 +1,34 @@
-fn factorial(n: f64) -> f64 {
-    if n == 0.0 {
-        return 1.0;
-    }
-    if n == 1.0 {
-        return 1.0;
-    }
-    let mut total: f64 = 2.0;
-    for i in 3..(n as u64 + 1) {
-        total *= i as f64;
-    }
-    return total;
+use fraction::BigFraction;
+use num::{bigint::ToBigInt, BigInt, BigRational, FromPrimitive, ToPrimitive};
+fn compute_m(m: BigInt, q: u128) -> BigInt {
+    let numerator = (12 * q + 2) * (12 * q + 6) * (12 * q + 10);
+    let denominator = (q + 1).pow(3);
+    return m * (numerator / denominator).to_bigint().unwrap();
 }
-fn compute_m(q: f64) -> f64 {
-    let numerator = factorial(6.0 * q);
-    let denominator = factorial(3.0 * q) * factorial(q).powf(3.0);
-    return numerator / denominator;
+fn compute_l(l: BigInt) -> BigInt {
+    return l + BigInt::from_i64(545140134).unwrap();
 }
-fn compute_l(q: f64) -> f64 {
-    return 545140134.0 * q + 13591409.0;
-}
-fn compute_x(q: f64) -> i128 {
-    return (-262537412640768000 as i128).pow(q as u32);
+fn compute_x(x: BigInt) -> BigInt {
+    return x * (-262537412640768000 as i128).to_bigint().unwrap();
 }
 fn main() {
     let c = 426880 as f64 * (10005 as f64).sqrt();
-    let n = 3;
-    let mut total: f64 = 0.0;
+    let n = 128;
+    let mut total: BigRational = BigRational::from_integer(0.to_bigint().unwrap());
+    let mut m: BigInt = BigInt::from(1);
+    let mut x: BigInt = BigInt::from(1);
+    let mut l: BigInt = BigInt::from(13591409);
     for q in 0..n {
-        let m = compute_m(q.into());
-        let l = compute_l(q.into());
-        let x = compute_x(q.into());
-        total += (m * l) / x as f64;
+        total += BigRational::new(m.clone() * l.clone(), x.clone());
+        m = compute_m(m, q);
+        l = compute_l(l);
+        x = compute_x(x);
     }
-    let value = 1.0 / total;
-    let pi = c * value;
-    println!("{}", pi)
+    total += BigRational::new(m * l, x);
+    let value = total.recip();
+    let pi = BigRational::from_f64(c).unwrap() * value;
+    // let numer = BigFraction::from(pi.numer().to_bigint().unwrap());
+    // let denom = BigFraction::from(pi.denom().to_bigint().unwrap());
+    // let thing = numer / denom;
+    println!("{}", pi.to_f64().unwrap())
 }
