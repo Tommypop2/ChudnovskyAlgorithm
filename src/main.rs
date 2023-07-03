@@ -13,7 +13,7 @@ fn compute_x(x: BigInt) -> BigInt {
 }
 fn main() {
     let c = 426880 as f64 * (10005 as f64).sqrt();
-    let n = 128;
+    let n = 512;
     let mut total: BigRational = BigRational::from_integer(0.to_bigint().unwrap());
     let mut m: BigInt = BigInt::from(1);
     let mut x: BigInt = BigInt::from(1);
